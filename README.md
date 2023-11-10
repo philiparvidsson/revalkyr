@@ -25,17 +25,25 @@ The assistants API is fantastic, but due to the stochastic nature of the AI, the
 
 First off, you'll need to set up your OpenAI API key.
 
+``` shell
+export OPENAI_API_KEY=your_api_key_here
+```
+
+I'm unsure whether you will have access to the assistant I have created. I'm going to have it create assistants programatically anyway, but right now it might prevent you from running the tests.
+
 To just run the tests, simply:
 
 ``` shell
 cd revalkyr
+python -m venv env
+source ./env/bin/activate
+pip install -r requirements.txt
 python -m --run-tests
 ```
 
 If you want to run the tests without resetting everything:
 
 ``` shell
-cd revalkyr
 python -m --run-tests-dirty
 ```
 
