@@ -1,14 +1,13 @@
 import re
-import subprocess
 
 
-class ReScriptASTNode:
+class Node:
     def __init__(self, data: list):
         pattern = r'(?:(?<=\s)|^)\([^()]*\)|[^\s"\'()]+|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\''
         self.data = [m.strip("\"'") for m in re.findall(pattern, data[0])]
         self.type = self.data[0]
 
-        self.children = [ReScriptASTNode(c) for c in data[1]]
+        self.children = [Node(c) for c in data[1]]
 
     def __str__(self):
         s = f"{' '.join(self.data)}"
@@ -17,13 +16,11 @@ class ReScriptASTNode:
         return s
 
 
-class ReScriptAST:
-    def __init__(self, root: ReScriptASTNode):
+class AST:
+    def __init__(self, root: Node):
         self.root = root
 
-    def find_references(
-        self, identifier: str, root: ReScriptASTNode = None
-    ) -> list[str]:
+    def find_references(self, identifier: str, root: Node = None) -> list[str]:
         if root is None:
             root = self.root
 
@@ -68,38 +65,6 @@ class ReScriptAST:
                 c.append(p())
             return [n, c]
 
-        root = ReScriptASTNode(p())
-        ast = ReScriptAST(root)
+        root = Node(p())
+        ast = AST(root)
         return ast
-
-
-class ReScript:
-    def __init__(self):
-        self._compiler_output = None
-
-    def npm_run(self, command: str, *args: list[str]):
-        command = "./node_modules/.bin/" + command
-        return subprocess.run([command, *args], capture_output=True, text=True)
-
-    def get_compiler_output(self):
-        self.check_for_changes()
-
-        if self._compiler_output is None:
-            result = self.npm_run("rescript")
-            if result.returncode == 0:
-                self._compiler_output = None
-            else:
-                self._compiler_output = result.stdout
-
-        return self._compiler_output
-
-    def get_ast(self, filename: str):
-        result = self.npm_run("bsc", "-dparsetree", filename)
-        if result.returncode == 0:
-            return None
-
-        return ReScriptAST.parse(result.stderr)
-
-    def check_for_changes(self):
-        self._compiler_output = None
-        pass

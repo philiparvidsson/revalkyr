@@ -1,1 +1,2 @@
-#!/usr/bin/env python3
+from .auto_externals import AutoExternals
+from .plugin import PluginResult

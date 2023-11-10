@@ -6,11 +6,13 @@ import sys
 
 from pathlib import Path
 
-from .config import load_config
-from .context import Context
-from .plugins import autobind
 
-import openai
+from . import services
+
+from .config import Config, load_config
+from .context import Context
+from .plugins import PluginResult
+from .services.service_mgr import ServiceMgr
 
 
 def parse_args():
@@ -46,17 +48,14 @@ def run_test(test_dir, clean):
     os.chdir(str(test_dir.resolve()))
     try:
         if clean:
-            subprocess.run(["npm", "i"], capture_output=True)
-            subprocess.run(["npm", "run", "clean"], capture_output=True)
+            subprocess.run(["npm", "i"], capture_output=True, check=True)
+            subprocess.run(["npm", "run", "clean"], capture_output=True, check=True)
 
         config = load_config("revalkyr.yaml")
-        ctx = Context(config)
-        plugins = [autobind]
+        run(config)
 
-        for plugin in plugins:
-            plugin.run(ctx)
-
-        subprocess.run(["npm", "start"], capture_output=True)
+        subprocess.run(["npm", "run", "build"], capture_output=True, check=True)
+        subprocess.run(["npm", "start"], capture_output=True, check=True)
     finally:
         os.chdir(str(cwd))
 
@@ -98,16 +97,30 @@ def main() -> int:
         return run_tests(not args.run_tests_dirty)
 
     config = load_config(args.config)
-
     os.chdir(config.root_dir)
-
-    ctx = Context(config)
-    plugins = [autobind]
-
-    for plugin in plugins:
-        plugin.run(ctx)
+    run(config)
 
     return 0
+
+
+def run(config: Config) -> None:
+    ctx = Context(config)
+
+    service_mgr = ServiceMgr(ctx, services.__all__)
+    service_mgr.init()
+
+    plugins = config.plugins
+    while plugins:
+        plugins_to_keep = []
+
+        for plugin in plugins:
+            plugin.ctx = ctx
+            plugin.service_mgr = service_mgr
+            if plugin.run() != PluginResult.NOTHING_TO_DO:
+                plugins_to_keep.append(plugin)
+
+        plugins = plugins_to_keep
+        time.sleep(1)
 
 
 if __name__ == "__main__":

@@ -1,11 +1,14 @@
 import yaml
 from pathlib import Path
 
+from .plugins import AutoExternals
+
 
 class Config:
-    def __init__(self, root_dir, src_dir):
+    def __init__(self, root_dir: Path, src_dir: Path, plugins):
         self.root_dir = Path(root_dir)
         self.src_dir = Path(src_dir).relative_to(root_dir)
+        self.plugins = plugins
 
 
 def load_config(filename: str) -> Config:
@@ -14,6 +17,8 @@ def load_config(filename: str) -> Config:
 
     root_dir = c.get("root_dir", ".")
     src_dir = c.get("src_dir", "./src")
-    config = Config(root_dir, src_dir)
+    plugins = [AutoExternals()]
+
+    config = Config(root_dir, src_dir, plugins)
 
     return config
