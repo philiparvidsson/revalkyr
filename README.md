@@ -15,7 +15,6 @@ This is an attempt to use AI to automate bindings generation for ReScript projec
 ## Why isn't there an @types similar repository for bindings in ReScript?
 
 First off, I just don't think the community is there yet. There hasn't been enough time for it to exist. Secondly, and more importantly, I think it might even be infeasible. For TypeScript, there is a definite set of types (albeit with tons of optinal fields and other seemingly random exceptions) that fit a given API. Because ReScript is so different from JavaScript, there are many, many different ways of doing things - giving you many options for how you want to set up your bindings - in particular, you probably want bindings that suit your style and codebase.
-In general: Use AI to automatically do things for you in the background while you work on your ReScript code bases.
 
 # What's the goal?
 
