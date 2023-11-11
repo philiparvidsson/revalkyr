@@ -25,18 +25,17 @@ class AssistantThread:
     def add_message(self, content: str) -> None:
         # Dedent everything just to normalize.
         content = dedent(content)
+        # print(content)
+        # print("-" * 80)
         openai.beta.threads.messages.create(
             thread_id=self.thread_id, role="user", content=content
         )
 
-    def add_source_code(self, source_code: str, language: str = "rescript") -> None:
+    def add_source_code(self, source_code: str, language: str) -> None:
         source_code = f"```{language}\n{dedent(source_code.strip())}\n```"
         self.add_message(source_code)
 
     def run(self, instructions: str = None) -> None:
-        if self.run_id is not None:
-            raise RuntimeError("Can only run thread once")
-
         run = openai.beta.threads.runs.create(
             thread_id=self.thread_id,
             assistant_id=self.assistant_id,
@@ -56,12 +55,10 @@ class AssistantThread:
 
     def get_last_message(self) -> Message:
         messages = self.get_messages()
+        # print(messages[-1])
         return messages[-1]
 
     def get_messages(self) -> list[Message]:
-        if self.run_id is None:
-            self.run()
-
         self.wait_until_ready()
 
         messages = openai.beta.threads.messages.list(thread_id=self.thread_id)

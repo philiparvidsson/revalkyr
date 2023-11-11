@@ -1,7 +1,7 @@
 import yaml
 from pathlib import Path
 
-from .plugins import AutoExternals
+from .plugins import AutoBindings
 
 
 class Config:
@@ -17,7 +17,7 @@ def load_config(filename: str) -> Config:
 
     root_dir = c.get("root_dir", ".")
     src_dir = c.get("src_dir", "./src")
-    plugins = [AutoExternals()]
+    plugins = [AutoBindings()]
 
     config = Config(root_dir, src_dir, plugins)
 

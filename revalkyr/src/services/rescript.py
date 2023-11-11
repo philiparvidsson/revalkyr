@@ -10,6 +10,7 @@ from ..rescript.rescript_errors import (
     CompilationError,
     MissingModuleCompilationError,
     MissingValueCompilationError,
+    SyntaxCompilationError,
     UnknownCompilationError,
     WrongTypeCompilationError,
 )
@@ -23,25 +24,28 @@ class ReScript(Service):
         self.compiler_output: str | None = None
 
     def init(self):
-        self.src_dir_watcher = FileWatcher(self.ctx.config.src_dir)
+        self.src_dir_watcher = FileWatcher(self.ctx.config.src_dir, "*.res")
 
     def compile(self) -> bool:
-        self.log("Compiling...")
+        self.log.info("Compiling...")
 
         result = self._npm_run("rescript")
         if result.returncode == 0:
             self.compiler_output = None
 
-            self.log("Compilation finished successfully")
+            self.log.info("Compilation finished successfully")
             return True
 
         self.compiler_output = result.stdout
 
-        self.log("Compilation failed with errors")
+        self.log.info("Compilation failed with errors")
+
+        # Reset changed state.
+        self.src_dir_watcher.any_files_changed()
         return False
 
     def compile_if_needed(self) -> None:
-        if self.src_dir_watcher.has_changed():
+        if self.src_dir_watcher.any_files_changed():
             self.compile()
 
     def get_ast(self, filename: Path) -> AST:
@@ -74,6 +78,10 @@ class ReScript(Service):
         m = re.search(r"The value (.+) can't be found in (.+)", compiler_output)
         if m:
             return MissingValueCompilationError(file, line, m.group(1), m.group(2))
+
+        m = re.search(r"Syntax error!", compiler_output)
+        if m:
+            return SyntaxCompilationError(file, line)
 
         m = re.search(r"This has type: (.+)\n *Somewhere wanted: (.+)", compiler_output)
         if m:

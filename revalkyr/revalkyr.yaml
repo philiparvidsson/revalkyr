@@ -1,3 +1,2 @@
-root_dir: ../tests/trivial-dayjs
-src_dir: ../tests/trivial-dayjs/src
-
+root_dir: ../tests/trivial-ky
+src_dir: ../tests/trivial-ky/src

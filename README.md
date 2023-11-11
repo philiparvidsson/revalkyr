@@ -10,17 +10,17 @@ This interpretation emphasizes the tool's focus on providing efficient and logic
 
 # What is this?
 
-This is an attempt to use AI to automate externals generation for ReScript projects. Writing externals is still my biggest gripe for ReScript.
+This is an attempt to use AI to automate bindings generation for ReScript projects. Writing bindings is still my biggest gripe for ReScript.
 
-## Why isn't there an @types similar repository for externals in ReScript?
+## Why isn't there an @types similar repository for bindings in ReScript?
 
-First off, I just don't think the community is there yet. There hasn't been enough time for it to exist. Secondly, and more importantly, I think it might even be infeasible. For TypeScript, there is a definite set of types (albeit with tons of optinal fields and other seemingly random exceptions) that fit a given API. Because ReScript is so different from JavaScript, there are many, many different ways of doing things - giving you many options for how you want to set up your externals - in particular, you probably want externals that suit your style and codebase.
+First off, I just don't think the community is there yet. There hasn't been enough time for it to exist. Secondly, and more importantly, I think it might even be infeasible. For TypeScript, there is a definite set of types (albeit with tons of optinal fields and other seemingly random exceptions) that fit a given API. Because ReScript is so different from JavaScript, there are many, many different ways of doing things - giving you many options for how you want to set up your bindings - in particular, you probably want bindings that suit your style and codebase.
 
 # What's the goal?
 
 In general: Use AI to automatically do things for you in the background while you work on your ReScript code bases.
 
-More specifically: Fix errors, write externals, give suggestions and more.
+More specifically: Fix errors, write bindings, give suggestions and more.
 
 We'll be using AI mainly, but there may also be inferenced operations done on static analysis (for example, pointing out trivial patterns that are still worth pointing out). In the end, revalkyr should be a sort of all-encompassing assistant suite for ReScript projects.
 

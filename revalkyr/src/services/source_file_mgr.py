@@ -27,8 +27,13 @@ class OutOfSourceDirectoryError(RuntimeError):
 class SourceFileMgr(Service):
     def is_revalkyr_file(self, file: Path) -> bool:
         self._check_permitted(file)
+        if not file.exists():
+            return False
         with file.open("r", encoding="utf-8") as f:
             return f.readline().startswith(f"// {COOKIE} ")
+
+    def get_files(self, pattern: str) -> Path:
+        return self.ctx.config.src_dir.rglob(pattern)
 
     def delete_file(self, file: Path) -> bool:
         self._check_permitted(file)
@@ -36,13 +41,13 @@ class SourceFileMgr(Service):
         if not file.exists():
             return False
 
-        if not self.is_revalkyr_source_file(file):
+        if not self.is_revalkyr_file(file):
             raise NotCreatedByUsError(
                 "Operation aborted: The file was not created by Revalkyr"
             )
 
         file.unlink()
-        self.log(f"Deleted {file}")
+        self.log.debug(f"Deleted {file}")
 
         return True
 
@@ -59,7 +64,7 @@ class SourceFileMgr(Service):
         self._check_permitted(file)
 
         if file.exists():
-            if not self.is_revalkyr_source_file(file):
+            if not self.is_revalkyr_file(file):
                 raise NotCreatedByUsError()
 
             if not overwrite:
@@ -70,7 +75,7 @@ class SourceFileMgr(Service):
         file.parent.mkdir(parents=True, exist_ok=True)
 
         file.write_text(self._with_cookie(content), encoding="utf-8")
-        self.log(f"Wrote {file} ({len(content)} chars)")
+        self.log.debug(f"Wrote {file} ({len(content)} chars)")
 
     def _check_permitted(self, file: Path) -> None:
         if not self._is_file_in_src_dir(file):

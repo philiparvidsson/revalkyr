@@ -19,7 +19,7 @@ class GitHub(Service):
                 filename = filenames.pop()
                 url = repo_url + f"/main/{filename}"
                 text = url_fetcher.get_text(url)
-                self.log(f"Downloaded {filename} for package {package_name}")
+                self.log.debug(f"Downloaded {filename} for package {package_name}")
                 return text
             except RequestException:
                 pass
@@ -52,7 +52,7 @@ class GitHub(Service):
                 filename = filenames.pop()
                 url = repo_url + f"/main/{filename}"
                 text = url_fetcher.get_text(url)
-                self.log(f"Downloaded {filename} for package {package_name}")
+                self.log.debug(f"Downloaded {filename} for package {package_name}")
                 return text
             except RequestException:
                 pass

@@ -4,18 +4,19 @@ from pathlib import Path
 
 
 class FileWatcher:
-    def __init__(self, path: Path | str):
+    def __init__(self, path: Path | str, pattern: str = "*"):
         if isinstance(path, str):
             path = Path(path)
 
         self.path = path
+        self.pattern = pattern
 
         self._files: dict[str, str] = dict()
 
-    def has_changed(self) -> bool:
+    def any_files_changed(self) -> bool:
         files: dict[str, str] = dict()
 
-        for file in self.path.rglob("*"):
+        for file in self.path.rglob(self.pattern):
             if file.is_file():
                 files[file.resolve()] = self._hash_file(file)
 

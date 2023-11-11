@@ -1,8 +1,8 @@
 let url = "http://worldtimeapi.org/api/ip"
-let () = ignore(
-  Ky.get(url)
-  ->Ky.text
-  ->Js.Promise2.then(async res => {
-    Js.Console.log(res)
-  }),
-)
+let foo = async () => {
+  let a =await Ky.get(url)
+  let b = await a->Ky.text
+  Js.Console.log(b)
+}
+
+let () = ignore(foo())

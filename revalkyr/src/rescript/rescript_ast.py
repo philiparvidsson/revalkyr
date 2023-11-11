@@ -1,6 +1,24 @@
 import re
 
 
+class Ident:
+    def __init__(self, name: str):
+        self.module_name: str | None = None
+        self.name: str | None = None
+
+        a = name.split(".")
+        if len(a) > 1:
+            self.module_name = a[0]
+            self.name = a[1]
+        else:
+            self.name = a[0]
+
+    def __str__(self):
+        if self.module_name:
+            return f"{self.module_name}.{self.name}"
+        return self.name
+
+
 class Node:
     def __init__(self, data: list):
         pattern = r'(?:(?<=\s)|^)\([^()]*\)|[^\s"\'()]+|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\''
@@ -20,7 +38,7 @@ class AST:
     def __init__(self, root: Node):
         self.root = root
 
-    def find_references(self, identifier: str, root: Node = None) -> list[str]:
+    def find_references(self, identifier: str, root: Node = None) -> list[Ident]:
         if root is None:
             root = self.root
 
@@ -34,7 +52,7 @@ class AST:
 
             refs.extend(self.find_references(identifier, child))
 
-        return refs
+        return [Ident(ref) if isinstance(ref, str) else ref for ref in refs]
 
     @staticmethod
     def parse(compiler_output: str):

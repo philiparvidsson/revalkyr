@@ -25,6 +25,10 @@ class MissingValueCompilationError(CompilationError):
         self.module_name = module_name
 
 
+class SyntaxCompilationError(CompilationError):
+    pass
+
+
 class WrongTypeCompilationError(CompilationError):
     def __init__(self, file: str, line: int, given_type: str, wanted_type: str):
         super().__init__(file, line)

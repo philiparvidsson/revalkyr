@@ -19,6 +19,6 @@ yarn-error.log*
 .eslintcache
 
 lib/
-autoexternals/
+autobindings/
 *.cmt
 *.bs.mjs

@@ -5,6 +5,7 @@ from ..context import Context
 class ServiceMgr:
     def __init__(self, ctx: Context, service_types: list[type[Service]]):
         self.ctx = ctx
+        self.log = ctx.log
         self.service_types = service_types
 
     def init(self):

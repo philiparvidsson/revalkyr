@@ -13,9 +13,12 @@ class NPM(Service):
 
         self._cache: dict[str, str | None] = dict()
 
+    def is_npm_package(self, package_name: str) -> bool:
+        return bool(self.get_github_repo_url(package_name))
+
     def get_github_repo_url(self, package_name: str) -> str | None:
         if package_name not in self._cache:
-            self.log(
+            self.log.debug(
                 f"Looking up GitHub repository URL for {package_name} on npmjs.com..."
             )
 
@@ -31,12 +34,12 @@ class NPM(Service):
                     if not repo_url.startswith("http"):
                         repo_url = "https://" + repo_url
                     self._cache[package_name] = repo_url
-                    self.log(f"Found it! {repo_url}")
+                    self.log.debug(f"Found it! {repo_url}")
                 else:
                     self._cache[package_name] = None
-                    self.log("Repository URL not found on the package page.")
+                    self.log.warn("Repository URL not found on the package page.")
             except RequestException as e:
                 self._cache[package_name] = None
-                self.log(f"Couldn't retrieve the package page: {e}")
+                self.log.warn(f"Couldn't retrieve the package page: {e}")
 
         return self._cache[package_name]

@@ -110,12 +110,19 @@ def run(config: Config) -> None:
     service_mgr.init()
 
     plugins = config.plugins
+
+    for plugin in plugins:
+        plugin.ctx = ctx
+        plugin.log = ctx.log
+        plugin.service_mgr = service_mgr
+
+    for plugin in plugins:
+        plugin.init()
+
     while plugins:
         plugins_to_keep = []
 
         for plugin in plugins:
-            plugin.ctx = ctx
-            plugin.service_mgr = service_mgr
             if plugin.run() != PluginResult.NOTHING_TO_DO:
                 plugins_to_keep.append(plugin)
 

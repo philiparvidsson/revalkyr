@@ -12,13 +12,14 @@ class PluginResult(Enum):
 class Plugin:
     def __init__(self):
         self.ctx = None
+        self.log = None
         self.service_mgr = None
 
     def get_service(self, service_type: type[T] | str) -> T:
         return self.service_mgr.get_service(service_type)
 
-    def log(self, message: str | None) -> None:
-        self.ctx.log(f"{type(self).__name__} :: {message}")
+    def init(self) -> None:
+        pass
 
     def run(self) -> PluginResult:
         pass

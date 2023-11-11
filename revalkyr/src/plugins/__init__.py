@@ -1,2 +1,2 @@
-from .auto_externals import AutoExternals
+from .auto_bindings import AutoBindings
 from .plugin import PluginResult

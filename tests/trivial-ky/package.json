@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "clean": "rm -rf lib src/autoexternals && find src -type f -name '*.bs.mjs' -exec rm {} +",
+    "clean": "rm -rf lib src/autobindings && find src -type f -name '*.bs.mjs' -exec rm {} +",
     "build": "rescript",
     "start": "node src/Main.bs.mjs"
   },
